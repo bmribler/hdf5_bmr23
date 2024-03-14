@@ -4854,52 +4854,18 @@ H5_DLL herr_t H5Pset_gc_references(hid_t fapl_id, unsigned gc_ref);
  *           </tr>
  *           <tr>
  *            <td>\p low=#H5F_LIBVER_EARLIEST<br />
- *                \p high=#H5F_LIBVER_V18</td>
+ *                \p high=#H5F_LIBVER_V18/<br />
+ *                \p high=#H5F_LIBVER_V110/<br />
+ *                \p high=#H5F_LIBVER_V112/<br />
+ *                \p high=#H5F_LIBVER_V114</td>
  *            <td>
  *             \li The library will create objects with the earliest
  *                 possible format versions.
  *             \li The library will allow objects to be created with the
- *                 latest format versions available to library release 1.8.x.
+ *                 latest format versions available to library releases 1.8.x/1.10.x/1.12.x/1.14.x.
  *             \li API calls that create objects or features that are
- *                 available to versions of the library greater than 1.8.x
- *                 release will fail.</td>
- *           </tr>
- *           <tr>
- *            <td>\p low=#H5F_LIBVER_EARLIEST<br />
- *                \p high=#H5F_LIBVER_V110</td>
- *            <td>
- *             \li The library will create objects with the earliest possible
- *                 format versions.
- *             \li The library will allow objects to be created with the latest
- *                 format versions available to library release 1.10.x.
- *             \li API calls that create objects or features that are
- *                 available to versions of the library greater than 1.10.x
- *                 release will fail.</td>
- *           </tr>
- *           <tr>
- *            <td>\p low=#H5F_LIBVER_EARLIEST<br />
- *                \p high=#H5F_LIBVER_V112</td>
- *            <td>
- *             \li The library will create objects with the earliest possible
- *                 format versions.
- *             \li The library will allow objects to be created with the latest
- *                 format versions available to library release 1.12.x.
- *             \li API calls that create objects or features that are
- *                 available to versions of the library greater than 1.12.x
- *                 release will fail.</td>
- *           </tr>
- *           <tr>
- *            <td>\p low=#H5F_LIBVER_EARLIEST<br />
- *                \p high=#H5F_LIBVER_V114</td>
- *            <td>
- *             \li The library will create objects with the earliest possible
- *                 format versions.
- *             \li The library will allow objects to be created with the latest
- *                 format versions available to library release 1.14.x.
- *             \li API calls that create objects or features that are
- *                 available to versions of the library greater than 1.14.x
- *                 release will fail.</td>
- *           </tr>
+ *                 available to versions of the library greater than 1.8.x/1.10.x/1.12.x/1.14.x release, respectively,
+ *                 will fail.</td>
  *           <tr>
  *            <td>\p low=#H5F_LIBVER_EARLIEST<br />
  *                \p high=#H5F_LIBVER_V116</td>
@@ -4931,7 +4897,9 @@ H5_DLL herr_t H5Pset_gc_references(hid_t fapl_id, unsigned gc_ref);
  *           </tr>
  *           <tr>
  *            <td>\p low=#H5F_LIBVER_V18<br />
- *                \p high=#H5F_LIBVER_V110</td>
+ *                \p high=#H5F_LIBVER_V110/<br />
+ *                \p high=#H5F_LIBVER_V112/<br />
+ *                \p high=#H5F_LIBVER_V114</td>
  *            <td>
  *             \li The library will create objects with the latest format
  *                 versions available to library release 1.8.x.
@@ -4939,34 +4907,6 @@ H5_DLL herr_t H5Pset_gc_references(hid_t fapl_id, unsigned gc_ref);
  *                 format versions available to library release 1.10.x.
  *             \li API calls that create objects or features that are
  *                 available to versions of the library greater than 1.10.x
- *                 release will fail.
- *             \li Earlier versions of the library may not be able to access
- *                 objects created with this setting.</td>
- *           </tr>
- *           <tr>
- *            <td>\p low=#H5F_LIBVER_V18<br />
- *                \p high=#H5F_LIBVER_V112</td>
- *            <td>
- *             \li The library will create objects with the latest format
- *                 versions available to library release 1.8.x.
- *             \li The library will allow objects to be created with the latest
- *                 format versions available to library release 1.12.x.
- *             \li API calls that create objects or features that are
- *                 available to versions of the library greater than 1.12.x
- *                 release will fail.
- *             \li Earlier versions of the library may not be able to access
- *                 objects created with this setting.</td>
- *           </tr>
- *           <tr>
- *            <td>\p low=#H5F_LIBVER_V18<br />
- *                \p high=#H5F_LIBVER_V114</td>
- *            <td>
- *             \li The library will create objects with the latest format
- *                 versions available to library release 1.8.x.
- *             \li The library will allow objects to be created with the latest
- *                 format versions available to library release 1.14.x.
- *             \li API calls that create objects or features that are
- *                 available to versions of the library greater than 1.14.x
  *                 release will fail.
  *             \li Earlier versions of the library may not be able to access
  *                 objects created with this setting.</td>
@@ -5004,7 +4944,8 @@ H5_DLL herr_t H5Pset_gc_references(hid_t fapl_id, unsigned gc_ref);
  *           </tr>
  *           <tr>
  *            <td>\p low=#H5F_LIBVER_V110<br />
- *                \p high=#H5F_LIBVER_V112</td>
+ *                \p high=#H5F_LIBVER_V112/<br />
+ *                \p high=#H5F_LIBVER_V114</td>
  *             <td>
  *              \li The library will create objects with the latest format
  *                  versions available to library release 1.10.x.
@@ -5012,20 +4953,6 @@ H5_DLL herr_t H5Pset_gc_references(hid_t fapl_id, unsigned gc_ref);
  *                  format versions available to library release 1.12.x.
  *              \li API calls that create objects or features that are available
  *                  to versions of the library greater than 1.12.x release will
- *                  fail.
- *              \li Earlier versions of the library may not be able to access
- *                  objects created with this setting.</td>
- *           </tr>
- *           <tr>
- *            <td>\p low=#H5F_LIBVER_V110<br />
- *                \p high=#H5F_LIBVER_V114</td>
- *             <td>
- *              \li The library will create objects with the latest format
- *                  versions available to library release 1.10.x.
- *              \li The library will allow objects to be created with the latest
- *                  format versions available to library release 1.14.x.
- *              \li API calls that create objects or features that are available
- *                  to versions of the library greater than 1.14.x release will
  *                  fail.
  *              \li Earlier versions of the library may not be able to access
  *                  objects created with this setting.</td>
