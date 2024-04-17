@@ -10,6 +10,7 @@
 \li \ref MT
 \li \ref SWMR
 \li \ref VDS
+\li \ref VERSION
 \li \ref VFL
 
  */
@@ -17,6 +18,12 @@
 /** \page MT HDF5 Thread Safe library
 
 \htmlinclude ThreadSafeLibrary.html
+
+*/
+
+/** \page BKFWDCOMPAT HDF5 Backward and Forward Compatibility Issues
+
+\htmlinclude BackwardForwardCompat.html
 
 */
 
@@ -65,5 +72,11 @@
 /** \page VDS Introduction to the Virtual Dataset - VDS
 
 \htmlinclude intro_VDS.html
+
+*/
+
+/** \page VERSION HDF5 Library Release Version Numbers
+
+\htmlinclude LibraryReleaseVersionNumbers.html
 
 */
