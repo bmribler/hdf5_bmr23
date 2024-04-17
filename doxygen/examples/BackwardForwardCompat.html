@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html><head>
+<title>HDF5 Backward and Forward Compatibility Issues</title>
+</head>
+
+<body>
+
+<p>This document discusses backward and forward compatibility issues across releases of the HDF5 Library and versions of the HDF5 file format in the form of FAQs. Backward compatibility refers to one of the following questions: Can a newer (later) library read a file and/or objects within a file that were created or written by an older (earlier) library?
+
+<p>(to be revised...)</p>
+
+<!--
+
+<p>Will an application written to work with a newer (later) version of the HDF5 Library compile, link, and run as would be expected with an older (earlier) version of the library?
+
+<p>Forward compatibility refers to one of the following questions: Can an older (earlier) library read a file and/or objects within a file that were created or written by a newer (later) library? Will an application written to work with an older (earlier) version of the HDF5 Library compile, link, and run as would be expected with a newer (later) version of the library?
+
+<p>The questions regarding whether a file or object is readable with various versions of HDF5 are discussed in “File Format Changes,” immediately below. The questions regarding whether an application written to work with one version of HDF5 will work with another are discussed in “Interface Changes.”
+
+<p>This document does not cover new functionality; clearly the use of a new feature will render an application incompatible with any version of the HDF5 Library older than the release in which that feature was introduced. Similarly, an older library is likely to be unable to read objects created or written with the newer feature. See the document “HDF5 Software Changes from Release to Release” for a complete listing of new APIs and API changes since HDF5 Release 1.2.2.
+
+<p>Library version numbers are used throughout this document, so a bit of explanation is in order. The HDF5 release number is a set of three integer values and is usually presented in one of the following formats:
+<p>HDF5-x.y.z, or simply 5-x.y.z
+<p>HDF5 Version x.y Release z
+<p>HDF5 Release x.y.z
+
+<p>The 5 is part of the library name and will only change if the entire file format and library are redesigned similar in scope to the changes between HDF4 and HDF5.
+
+<p>The x is the major version number and changes when there is an extensive change to the file format or library API. Such a change will likely require files to be translated and applications to be modified. This number is not expected to change frequently.
+
+<p>The y is the minor version number and is incremented by each public release that presents new features. Even numbers are reserved for stable public versions of the library while odd numbers are reserved for development versions.
+
+<p>The z is the release number. For public versions of the library, the release number is incremented each time a new set of bug fixes and/or performance enhancements is made available to the public.
+
+<p>Consider this example:
+<p>HDF5 Release 1.2.3
+<p>This would be release 3 of version 1.2 (major version 1, minor version 2) of the product HDF5.
+
+<p>It is often convenient to drop the release number when referring to a version of the library, such as saying HDF5 Version 1.2. The release number can be any value in this case.
+
+<p>The above material regarding HDF5 version and release numbers is adapted from “HDF5 Release Version Numbers.”
+
+<p>File format version numbers are not used to identify or describe the format of an entire HDF5 file. Rather, objects and structures within an HDF5 file are individually versioned, as described in the HDF5 File Format Specification. The version of an HDF5 file, as a unit, is described by the release number of the HDF5 Library that wrote the file and the copy of the HDF5 File Format Specification distributed with that release.
+
+<p>An HDF5 Library of any given release is designed to read all existing HDF5 files from that or any prior release. Although major versions sometimes contain features that require additions and/or changes to the HDF5 file format, the library will by default write out files that conform to a maximum compatibility principle. That is, files are written with the earliest version of the file format that describes the information, rather than always using the latest version possible. This provides the best forward compatibility by allowing the maximum number of older versions of the library to read new files.
+
+<p>If library features are used that require new file format features, or if the application requests that the library write out only the latest version of the file format, the files produced with a newer version of the HDF5 Library may not be readable by older versions of the HDF5 Library.
+
+<h3>File Format Changes</h3>
+Or: When might one HDF5 release be unable to read data created, written or changed by another HDF5 release?
+
+<ul>
+<li>If you add the fletcher32 filter after the deflate filter, the resulting dataset cannot be read by other versions of HDF5</li>
+
+<li>HDF5 1.8 cannot read my old files but HDF5 1.6 can.</li>
+
+<li>IDL 7.0 and other HDF5 1.6.3 applications cannot read my files created with HDF5 1.8</li>
+
+<li>PV-WAVE (v9.5, v10.0) and other HDF5-1.6.2 applications cannot read my files created with HDF5 1.8</li>
+
+<li>I cannot open some objects in some files created or changed with an HDF5 Library from Release 1.6.0 or later.</li>
+
+<li>I cannot open some files created or changed with an HDF5 Library from Release 1.6.0 or later.</li>
+
+<li>New group structure options were introduced at Release 1.8.0.</li>
+</ul>
+
+The first class of compatibility issues consists of situations where an HDF5 Library from one release cannot read files or datasets created by an HDF5 Library of a different release. Such a condition can arise when the HDF5 file format has changed, which usually occurs for one of the following reasons:
+
+To allow for recording a new class of data or metadata. The B-tree parameter issue at HDF5-1.6.0-post* is an example of such a change. To allow for a new sort of file structure. The group revision at Release 1.8.0 is an example of such a structural change.
+
+
+<h5>If you add the fletcher32 filter after the deflate filter, the resulting dataset cannot be read by other versions of HDF5</h5>
+
+If you add the fletcher32 filter after the deflate filter, the resulting dataset cannot be read by other versions of HDF5. If you add it before the deflate filter then other versions of HDF5 can read the dataset. This has been seen when creating files with 1.6 and accessing them with 1.8 (and vice-versa for 1.8 to 1.6).
+
+Work-around: Remove the filter using h5repack for 1.6, and then add it back with h5repack for 1.8 (or vice-versa).
+
+HDF5 1.8 cannot read my old HDF5 files but HDF5 1.6 can.</h5>
+
+There was an issue that occurred with HDF5 files that were created with older versions of HDF5 (prior to HDF5 1.6.5). HDF5 1.8 could not read those files, although versions of HDF5 1.6 were able to read the files.
+
+The problem was that the symbol table message in the object header of the old files was zeroed out, while the cached symbol table information in the group entry (in the parent symbol table) was correct. HDF5 1.6 looks at the cached entry first, while HDF5 1.8 ignores the cached entry (except for the root group). This is why HDF5 1.8 failed in this case. Whatever bug caused this problem appears to have been fixed.
+
+Work-around: Download a recent version of h5repack for HDF5 1.6 (for example, h5repack built for HDF5 1.6.10) and re-write the affected file to a new file, using h5repack. If you compare the old and new files with h5diff, the files will be the same, although they may have different sizes. However, HDF5 1.8 WILL be able to read the new file.
+
+IDL 7.0 and other HDF5 1.6.3 applications cannot read my files created with HDF5 1.8</li>
+
+This issue was due to HDF5 1.6.3 and earlier releases requiring certain data to be cached, which was no longer being done in HDF5 1.8. The resolution in HDF5 1.8 was to cache the data. There were two problems that contributed to this issue: one was fixed in HDF5 1.8.3 (bug 1423) and the other was fixed in HDF5 1.8.6 (bug 1864). All files created with HDF5 1.8.6 (and above) should be readable by HDF5 1.6.3 (and earlier).
+
+HDF5 1.8 files that were created prior to HDF5 1.8.6 can be made readable by HDF5 1.6.3 by repacking the file with the h5repack tool that comes with HDF5 1.8.6 (or later) or HDF5 1.6.10.
+
+PV-WAVE (v9.5, v10.0) and other HDF5-1.6.2 applications cannot read my files created with HDF5 1.8</li>
+
+HDF5-1.6.2 (and earlier releases) used versions 1 and 2 of the Data Storage - Layout message in the Data Object Header. A new layout message (version 3) was added in HDF5-1.6.3. Versions 1.6.3 - 1.6.10 defaulted to writing version 1 or 2 (depending on the allocation time), as long as none of the dimensions were greater than 2^32.
+
+With the release of HDF5-1.8, the decision was made to only write version 3 layout messages. The consequence is that HDF5-1.6.2 and previous releases cannot read files created with HDF5-1.8. The following error occurs:
+
+   #006:
+  I:\users\bradm\devel\hdf5-1_62\hdf5-1.6.2\windows\hdf5\src\H5Olayout.c l
+  ine 119 in H5O_layout_decode(): bad version number for layout message
+      major(12): Object header layer
+      minor(37): Unable to load meta data into cache 
+A solution is to obtain the h5repack for a later HDF5-1.6 release (HDF5-1.6.3 through 1.6.10) and repack the file. This will write a a version 1 or 2 layout message to the file, which will enable HDF5-1.6.2 to read it. Previous releases of HDF5 can be obtained from the Downloads page. The already built h5repack utility can be obtained for many of the platforms provided.
+
+Opening Objects with Unknown Header Messages with a Pre-1.6.0 Library</li>
+Affected feature: Forward compatibility
+
+An HDF5 Library Release 1.4.5 or earlier cannot read files created with release 1.6.0 or later. This problem was fixed in a version posted as 1.4.5-post2. Prior to that fix, HDF5 issued an error and failed to open objects with unknown header messages (for example, metadata about an object added in a later version of the library). The fix allows the library to ignore an unknown message and proceeded to open the object.
+
+Work-around: A version 1.4.5-post2 library or later will recognize that it cannot read such header messages and will proceed to open the object. If a user or application is unable to switch to the newer libary, there is no known work-around.
+
+Change in B-tree Control Parameter (Release 1.6.0post*)</li>
+Affected feature: Chunked datasets
+
+With HDF5-1.6.0-post*, the ability to set and query the size of a parameter used to control B-trees for indexing chunked datasets was added to the HDF5 Library. Recording this parameter information required a change in the HDF5 file format.
+
+If you have never used and never will use this property, then versions of the HDF5 Library prior to release 1.6.0 can read files created with new versions of the library1 and vice-versa. Once this feature is invoked, however, versions of the library prior to HDF5-1.6.0-post* will not be able to read HDF5 files created with this property.
+
+The affected functions are H5Pset_istore_k, which sets the size of the parameter, and H5Pget_istore_k, which queries that value.
+
+Work-around: Once this property is used, a file will be accessible only via the new library. Otherwise, there is no known work-around.
+
+1. This statement assumes that said file, created with a new version of the library, does not include any other features that are not available in the older library.
+
+Group Revisions in Release 1.8.0</li>
+Affected feature: Group properties, such as compact groups, creation ordering, andUNICODE encoding
+
+The default behavior of the HDF5 Library in Release 1.8 is to create files with forward-compatible2 group structures. If you do not specify any group revision properties when creating files in 1.8, then Release 1.6.x and earlier libraries will be able to read the group structures.
+
+If the new group revision properties are used, the library will create files employing a new group structure that will not be readable by pre-1.8 libraries.
+
+Work-around once this feature has been invoked: No known work-around.
+
+2. As you will recall from the overview, one of the issues of forward compatibility is “Can an earlier library read a file and/or objects within a file that were created or written by a later library?”
+Interface Changes
+Or: When might an application written for one release of HDF5 fail to link or work as expected with a different HDF5 release?
+How can I build an new HDF5 Library so that my old application will work without updating it?
+
+Since Release 1.6.3, I have been unable to read files that were created with the checksum filter and written with an HDF5 Library from Release 1.6.2 or earlier.
+
+When I attempt to open certain data objects in an older HDF5 file (from Release 1.6.4 or earlier) with an HDF5 Library of Release 1.6.5 or later, the open fails with a 'corrupt object header' message.
+
+What APIs and public data structures might have to be changed in my HDF5 application to port it from Version 1.6 to Release 1.8.0?
+
+The second class of compatibility issues consists of situations where an application written to work with one version of the HDF5 Library fails to compile, link, or behave as would be expected with a different version of the library. Such conditions can arise in either of the following ways:
+
+An HDF5 application written to work with an older version of the HDF5 Library may call HDF5 functions that have been deprecated and removed in more recent releases. An HDF5 application written to work with a newer version of the HDF5 Library may call HDF5 functions that did not appear in an earlier release. An HDF5 application written to work with one version of the HDF5 Library may call HDF5 functions whose parameters or return value differ in a different release of the library. An HDF5 application relies on HDF5 functionality whose behavior has changed without a visible change in the API. (Every effort is made to keep this the rarest of cases; it should happen only when the original behavior was in error.) An HDF5 application may use public HDF5 data structures that have changed.
+Backward Compatibility Compiler Flags
+
+In many cases, issues 2 and 3 above can be addressed by compiling the newer library with a backward compatibility flag. For example, the Release 1.6.x series includes the configure flag --enable -hdf5v1_4 for users who need to build those releases to be compatible with applications written for the Release 1.4.x series. To discover the configure flags that are available for a release, execute the command
+./configure --help
+in the top-level directory (hdf5/) of the source code tree for the newer of the two HDF5 Library versions in question. Note that compatibility flags are maintained only for the releases associated with the immediately following minor version number (see library version numbers above). For example, the --enable -hdf5v1_4 flag was available only during the Release 1.6.x cycle; it will not be available in the Release 1.8.x cycle.
+
+Note, however, that it is usually desirable to update applications so that they work with the newest HDF5 release. This backward-compatibility flag is provided primarily for situations where such updates cannot happen immediately or where the user does not have access to the application source code and cannot control the timing of such an update.
+
+General Notes Regarding New Features and Capabilities
+
+When new features or capabilities are added to HDF5, every attempt is made to ensure that new versions of the HDF5 library continue to create files that prior versions of the library will be able to read. In many cases, older versions will be able to read everything except data or metadata generated by the new feature.
+
+If you will be using different versions of HDF5, be aware of the new features and changes in each release. For easy reference, the RELEASE.txt files that come with each release can be viewed from the following location:
+
+    http://www.hdfgroup.org/ftp/HDF5/prev-releases/ReleaseFiles/
+See the document “HDF5 Software Changes from Release to Release” for a complete listing of API changes since HDF5 Release 1.2.2:
+
+    /HDF5/doc/ADGuide/Changes.html
+Notes regarding specific changes follow.
+
+Changes in the behavior of existing functionality
+
+Change in recorded checksum value on little-endian systems at Release 1.6.3
+
+In the transition from the Release 1.6.2 to Release 1.6.3, a correction was made in the calculation of checksum values on little-endian systems.
+
+The Fletcher32 EDC checksum filter was added in 1.6.0. In the original implementation, there was a bug in the filter such that the checksum value was calculated incorrectly on little-endian systems. The error was fixed in HDF5 Release 1.6.3. As a result of this fix, an HDF5 Library of Release 1.6.2 or earlier cannot read a dataset created or written with Release 1.6.3 or later if the dataset was created with the checksum filter and the filter is enabled in the reading library.
+Work-around: An HDF5 Library of Release 1.6.2 or earlier will be able to read a dataset created or written with the checksum filter by an HDF5 Library of Release 1.6.3 or later if the checksum filter is disabled for the read operation. This can be accomplished via a call to H5Pset_edc_check with the value H5Z_DISABLE_EDC in the second parameter. This has the obvious drawback that the application will then be unable to verify the checksum, but the data does remain accessible.
+
+Miscounted messages in object headers Release 1.6.5 and earlier
+
+This is a file corruption issue, but it is thought to be extremely rare.
+
+There was a bug in Release 1.6.5 and earlier releases that, in specific situations, recorded an incorrect count of the number of messages in an object header. This bug was discovered when strict checking of the header message count was added after Release 1.6.5.
+
+Generally, the bug is triggered by the following the sequence of actions:
+
+Create an object. Close the file. Re-open the file. Add 2 (or more) attributes to the object. Close the file. Re-open the file. Delete one of the attributes on the object. Add a smaller attribute to the object. Delete the smaller atttribute on the object. Add a larger attribute on the object.
+After this sequence, the number of header messages stored for the object will be off by one; if the sequence is executed repeatedly, the number may be off by more than one. Other sequences that modify attributes on an object might also trigger this bug, though none are currently known.
+
+Discovering whether your files are affected: If you are opening an object and the bottom few messages of the HDF5 error stack resemble the following, the object has been affected by this bug:
+
+    #007: ../../hdf5_v1.6/src/H5C.c line 3887 in H5C_load_entry(): unable to load entry
+      major(08): Meta data cache layer
+      minor(40): Unable to load metadata into cache
+    #008: ../../hdf5_v1.6/src/H5Ocache.c line 332 in H5O_load(): corrupt object header - too few messages
+      major(12): Object header layer
+      minor(40): Unable to load metadata into cache
+The best string to search for in the HDF5 error stack output is 'corrupt object header' (without the quotes).
+Work-around: If your files have been affected by this bug, or you are concerned that your files might have been, please contact the HDF Helpdesk at help [@] hdfgroup.org. A tool that detects the error in affected files and repairs the files, h5fix_obj_nmsgs, is available at the following location: http://www.hdfgroup.org/ftp/HDF5/special_tools/h5fix_obj_nmsgs/
+
+<h3>Interface Changes in the Release 1.8.x Series</h3>
+
+Many HDF5 APIs and public data structures changed with HDF5 1.8.
+
+See the “HDF5 Software Changes from Release to Release” document for a complete listing of the new functions and tools.
+
+-->
+- - Last modified: 17 August 2015
+
+</body>
+</html>
