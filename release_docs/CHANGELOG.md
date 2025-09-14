@@ -483,6 +483,12 @@ HDF5 release, platforms tested, and known problems in this release.
 
 ## Library
 
+### Fixed security issue CVE-2025-7068
+
+   Failures during the discard process on a metadata cache entry could cause the library to skip calling the callback to free the cache entry. This could result in resource leaks and issues with flushing and closing the metadata cache during file close. This has been fixed by noting errors during the discard process, but attempting to fully free a cache entry before signalling that an error has occurred.
+
+   Fixes GitHub issues #5578 and #4586
+
 ### Fixed security issue CVE-2025-6857
 
    An HDF5 file had a corrupted v1 B-tree that would result in a stack overflow when performing a lookup on it. This has been fixed with additional integrity checks.
