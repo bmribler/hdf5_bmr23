@@ -1024,6 +1024,7 @@ H5C__flush_invalidate_cache(H5F_t *f, unsigned flags)
             index_size += cache_ptr->index_ring_size[i];
             clean_index_size += cache_ptr->clean_index_ring_size[i];
             dirty_index_size += cache_ptr->dirty_index_ring_size[i];
+  fprintf(stderr, "%s: %d: dirty_index_size[%d] = %d\n", __func__, __LINE__, dirty_index_size);
 
             slist_len += cache_ptr->slist_ring_len[i];
             slist_size += cache_ptr->slist_ring_size[i];
@@ -2138,6 +2139,7 @@ H5C__serialize_cache(H5F_t *f)
         index_size += cache_ptr->index_ring_size[i];
         clean_index_size += cache_ptr->clean_index_ring_size[i];
         dirty_index_size += cache_ptr->dirty_index_ring_size[i];
+  fprintf(stderr, "%s: %d: dirty_index_size[%d] = %d\n", __func__, __LINE__, dirty_index_size);
 
         slist_len += cache_ptr->slist_ring_len[i];
         slist_size += cache_ptr->slist_ring_size[i];

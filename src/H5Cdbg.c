@@ -59,6 +59,7 @@
 /*******************/
 
 #ifndef NDEBUG
+#endif /* NDEBUG */
 
 /*-------------------------------------------------------------------------
  * Function:    H5C_dump_cache
@@ -80,6 +81,7 @@ H5C_dump_cache(H5C_t *cache_ptr, const char *cache_name)
 
     FUNC_ENTER_NOAPI(FAIL)
 
+  fprintf(stderr, "H5C_dump_cache...\n");
     /* Sanity check */
     assert(cache_ptr != NULL);
     assert(cache_name != NULL);
@@ -96,6 +98,13 @@ H5C_dump_cache(H5C_t *cache_ptr, const char *cache_name)
         entry_ptr = cache_ptr->index[i];
 
         while (entry_ptr != NULL) {
+fprintf(stderr, "Dirty ring sizes: USER=%zu, RDFSM=%zu, MDFSM=%zu, SBE=%zu, SB=%zu.\n",
+          cache_ptr->dirty_index_ring_size[H5C_RING_USER],
+          cache_ptr->dirty_index_ring_size[H5C_RING_RDFSM],
+          cache_ptr->dirty_index_ring_size[H5AC_RING_MDFSM],
+          cache_ptr->dirty_index_ring_size[H5C_RING_SBE],
+          cache_ptr->dirty_index_ring_size[H5C_RING_SB]);
+
             if (H5SL_insert(slist_ptr, entry_ptr, &(entry_ptr->addr)) < 0)
                 HGOTO_ERROR(H5E_CACHE, H5E_BADVALUE, FAIL, "can't insert entry in skip list");
 
@@ -158,7 +167,6 @@ done:
 
     FUNC_LEAVE_NOAPI(ret_value)
 } /* H5C_dump_cache() */
-#endif /* NDEBUG */
 
 #ifndef NDEBUG
 
@@ -244,6 +252,7 @@ H5C_dump_cache_LRU(H5C_t *cache_ptr, const char *cache_name)
  *-------------------------------------------------------------------------
  */
 #ifndef NDEBUG
+#endif /* NDEBUG */
 herr_t
 H5C_dump_cache_skip_list(H5C_t *cache_ptr, char *calling_fcn)
 {
@@ -257,17 +266,17 @@ H5C_dump_cache_skip_list(H5C_t *cache_ptr, char *calling_fcn)
     assert(cache_ptr != NULL);
     assert(calling_fcn != NULL);
 
-    fprintf(stdout, "\n\nDumping metadata cache skip list from %s.\n", calling_fcn);
-    fprintf(stdout, " slist %s.\n", cache_ptr->slist_enabled ? "enabled" : "disabled");
-    fprintf(stdout, "	slist len = %" PRIu32 ".\n", cache_ptr->slist_len);
-    fprintf(stdout, "	slist size = %zu.\n", cache_ptr->slist_size);
+    fprintf(stderr, "\n\nDumping metadata cache skip list from %s.\n", calling_fcn);
+    fprintf(stderr, " slist %s.\n", cache_ptr->slist_enabled ? "enabled" : "disabled");
+    fprintf(stderr, "	slist len = %" PRIu32 ".\n", cache_ptr->slist_len);
+    fprintf(stderr, "	slist size = %zu.\n", cache_ptr->slist_size);
 
     if (cache_ptr->slist_len > 0) {
 
         /* If we get this far, all entries in the cache are listed in the
          * skip list -- scan the skip list generating the desired output.
          */
-        fprintf(stdout, "Num:    Addr:               Len: Prot/Pind: Dirty: Type:\n");
+        fprintf(stderr, "Num:    Addr:               Len: Prot/Pind: Dirty: Type:\n");
 
         i = 0;
 
@@ -278,11 +287,11 @@ H5C_dump_cache_skip_list(H5C_t *cache_ptr, char *calling_fcn)
             entry_ptr = NULL;
 
         while (entry_ptr != NULL) {
-            fprintf(stdout, "%s%d       0x%016llx  %4lld    %d/%d       %d    %s\n", cache_ptr->prefix, i,
+            fprintf(stderr, "%s%d       0x%016llx  %4lld    %d/%d       %d    %s\n", cache_ptr->prefix, i,
                     (long long)(entry_ptr->addr), (long long)(entry_ptr->size),
                     (int)(entry_ptr->is_protected), (int)(entry_ptr->is_pinned), (int)(entry_ptr->is_dirty),
                     entry_ptr->type->name);
-            fprintf(stdout, "		node_ptr = %p, item = %p\n", (void *)node_ptr, H5SL_item(node_ptr));
+            fprintf(stderr, "		node_ptr = %p, item = %p\n", (void *)node_ptr, H5SL_item(node_ptr));
 
             /* increment node_ptr before we delete its target */
             node_ptr = H5SL_next(node_ptr);
@@ -295,11 +304,10 @@ H5C_dump_cache_skip_list(H5C_t *cache_ptr, char *calling_fcn)
         } /* end while */
     }     /* end if */
 
-    fprintf(stdout, "\n\n");
+    fprintf(stderr, "\n\n");
 
     FUNC_LEAVE_NOAPI(ret_value)
 } /* H5C_dump_cache_skip_list() */
-#endif /* NDEBUG */
 
 /*-------------------------------------------------------------------------
  * Function:    H5C_set_prefix
@@ -851,6 +859,7 @@ done:
  *-------------------------------------------------------------------------
  */
 #ifndef NDEBUG
+#endif /* NDEBUG */
 herr_t
 H5C_validate_index_list(H5C_t *cache_ptr)
 {
@@ -914,6 +923,7 @@ H5C_validate_index_list(H5C_t *cache_ptr)
         if (entry_ptr->is_dirty) {
             dirty_size += entry_ptr->size;
             dirty_index_ring_size[entry_ptr->ring] += entry_ptr->size;
+  fprintf(stderr, "%s: %d: dirty_index_ring_size[%d] = %zu\n", __func__, __LINE__, entry_ptr->ring, dirty_index_ring_size[entry_ptr->ring]);
         } /* end if */
         else {
             clean_size += entry_ptr->size;
@@ -947,7 +957,6 @@ done:
 
     FUNC_LEAVE_NOAPI(ret_value)
 } /* H5C_validate_index_list() */
-#endif /* NDEBUG */
 
 /*-------------------------------------------------------------------------
  * Function:    H5C_get_entry_ptr_from_addr()
@@ -1053,6 +1062,7 @@ H5C_get_serialization_in_progress(const H5C_t *cache_ptr)
  *-------------------------------------------------------------------------
  */
 #ifndef NDEBUG
+#endif /* NDEBUG */
 bool
 H5C_cache_is_clean(const H5C_t *cache_ptr, H5C_ring_t inner_ring)
 {
@@ -1067,8 +1077,14 @@ H5C_cache_is_clean(const H5C_t *cache_ptr, H5C_ring_t inner_ring)
     assert(inner_ring <= H5C_RING_SB);
 
     while (ring <= inner_ring) {
+  fprintf(stderr, "cache_ptr->dirty_index_ring_size[%d] = %zu, is ", ring, cache_ptr->dirty_index_ring_size[ring]);
         if (cache_ptr->dirty_index_ring_size[ring] > 0)
+{
+  fprintf(stderr, "not clean\n");
             HGOTO_DONE(false);
+}
+else
+  fprintf(stderr, "_clean_\n");
 
         ring++;
     } /* end while */
@@ -1076,7 +1092,6 @@ H5C_cache_is_clean(const H5C_t *cache_ptr, H5C_ring_t inner_ring)
 done:
     FUNC_LEAVE_NOAPI(ret_value)
 } /* H5C_cache_is_clean() */
-#endif /* NDEBUG */
 
 /*-------------------------------------------------------------------------
  * Function:    H5C_verify_entry_type()

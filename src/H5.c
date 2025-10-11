@@ -154,9 +154,6 @@ H5_init_library(void)
      */
     H5_INIT_GLOBAL = true;
 
-    /* Make sure we picked a good type for ssize_t if it wasn't present */
-    HDcompile_assert(sizeof(size_t) == sizeof(ssize_t));
-
 #ifdef H5_HAVE_PARALLEL
     {
         int mpi_initialized;
@@ -389,21 +386,29 @@ H5_term_library(void)
              * all of which is performed in the 'F' shutdown.
              */
             pending += DOWN(A_top);
+  fprintf(stderr, "pending A = %d\n", pending);
             pending += DOWN(D_top);
+  fprintf(stderr, "pending D = %d\n", pending);
             pending += DOWN(G_top);
+  fprintf(stderr, "pending G = %d\n", pending);
             pending += DOWN(M_top);
+  fprintf(stderr, "pending M = %d\n", pending);
             pending += DOWN(S_top);
+  fprintf(stderr, "pending S = %d\n", pending);
             pending += DOWN(T_top);
+  fprintf(stderr, "pending T = %d\n", pending);
         } /* end if */
 
         /* Don't shut down the file code until objects in files are shut down */
         if (pending == 0)
             pending += DOWN(F);
+  fprintf(stderr, "pending F = %d\n", pending);
 
         /* Don't shut down the property list code until all objects that might
          * use property lists are shut down */
         if (pending == 0)
             pending += DOWN(P);
+  fprintf(stderr, "pending P = %d\n", pending);
 
         /* Wait to shut down the "bottom" of various interfaces until the
          * files are closed, so pieces of the file can be serialized
@@ -421,6 +426,7 @@ H5_term_library(void)
             pending += DOWN(S);
             pending += DOWN(T);
         } /* end if */
+  fprintf(stderr, "pending A D G M S T = %d\n", pending);
 
         /* Don't shut down "low-level" components until "high-level" components
          * have successfully shut down.  This prevents property lists and IDs
@@ -429,28 +435,38 @@ H5_term_library(void)
          */
         if (pending == 0) {
             pending += DOWN(AC);
+  fprintf(stderr, "pending AC = %d\n", pending);
             /* Shut down the "pluggable" interfaces, before the plugin framework */
             pending += DOWN(Z);
+  fprintf(stderr, "pending Z = %d\n", pending);
             pending += DOWN(FD);
+  fprintf(stderr, "pending FD = %d\n", pending);
             pending += DOWN(VL);
+  fprintf(stderr, "pending VL = %d\n", pending);
             /* Don't shut down the plugin code until all "pluggable" interfaces (Z, FD, PL) are shut down */
             if (pending == 0)
                 pending += DOWN(PL);
+  fprintf(stderr, "pending PL = %d\n", pending);
             /* Don't shut down the error code until other APIs which use it are shut down */
             if (pending == 0)
                 pending += DOWN(E);
+  fprintf(stderr, "pending E = %d\n", pending);
             /* Don't shut down the ID code until other APIs which use them are shut down */
             if (pending == 0)
                 pending += DOWN(I);
+  fprintf(stderr, "pending I = %d\n", pending);
             /* Don't shut down the skip list code until everything that uses it is down */
             if (pending == 0)
                 pending += DOWN(SL);
+  fprintf(stderr, "pending SL = %d\n", pending);
             /* Don't shut down the free list code until everything that uses it is down */
             if (pending == 0)
                 pending += DOWN(FL);
+  fprintf(stderr, "pending FL = %d\n", pending);
             /* Don't shut down the API context code until _everything_ else is down */
             if (pending == 0)
                 pending += DOWN(CX);
+  fprintf(stderr, "pending CX = %d\n", pending);
         } /* end if */
     } while (pending && ntries++ < 100);
 

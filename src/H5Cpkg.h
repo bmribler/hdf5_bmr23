@@ -832,10 +832,12 @@
         if ((entry_ptr)->is_dirty) {                                                                         \
             (cache_ptr)->dirty_index_size += (entry_ptr)->size;                                              \
             (cache_ptr)->dirty_index_ring_size[(entry_ptr)->ring] += (entry_ptr)->size;                      \
+              fprintf(stderr, "%s: %d if: assigning new value to dirty_index_ring_size[%d] = %d\n", __func__, __LINE__, (entry_ptr)->ring, (cache_ptr)->dirty_index_ring_size[(entry_ptr)->ring]);                                  \
         }                                                                                                    \
         else {                                                                                               \
             (cache_ptr)->clean_index_size += (entry_ptr)->size;                                              \
             (cache_ptr)->clean_index_ring_size[(entry_ptr)->ring] += (entry_ptr)->size;                      \
+              fprintf(stderr, "%s: %d else: assigning new value to dirty_index_ring_size[%d] = %d\n", __func__, __LINE__, (entry_ptr)->ring, (cache_ptr)->dirty_index_ring_size[(entry_ptr)->ring]);                                  \
         }                                                                                                    \
         if ((entry_ptr)->flush_me_last) {                                                                    \
             (cache_ptr)->num_last_entries++;                                                                 \
@@ -867,6 +869,7 @@
         if ((entry_ptr)->is_dirty) {                                                                         \
             (cache_ptr)->dirty_index_size -= (entry_ptr)->size;                                              \
             (cache_ptr)->dirty_index_ring_size[(entry_ptr)->ring] -= (entry_ptr)->size;                      \
+              fprintf(stderr, "%s: %d: dirty_index_ring_size[%d] = %d\n", __func__, __LINE__, (entry_ptr)->ring, (cache_ptr)->dirty_index_ring_size[(entry_ptr)->ring]);                                  \
         }                                                                                                    \
         else {                                                                                               \
             (cache_ptr)->clean_index_size -= (entry_ptr)->size;                                              \
@@ -916,6 +919,7 @@
         H5C__PRE_HT_UPDATE_FOR_ENTRY_CLEAN_SC(cache_ptr, entry_ptr, fail_val);                               \
         (cache_ptr)->dirty_index_size -= (entry_ptr)->size;                                                  \
         (cache_ptr)->dirty_index_ring_size[(entry_ptr)->ring] -= (entry_ptr)->size;                          \
+              fprintf(stderr, "%s: %d: dirty_index_ring_size[%d] = %d\n", __func__, __LINE__, (entry_ptr)->ring, (cache_ptr)->dirty_index_ring_size[(entry_ptr)->ring]);                                  \
         (cache_ptr)->clean_index_size += (entry_ptr)->size;                                                  \
         (cache_ptr)->clean_index_ring_size[(entry_ptr)->ring] += (entry_ptr)->size;                          \
         H5C__POST_HT_UPDATE_FOR_ENTRY_CLEAN_SC(cache_ptr, entry_ptr, fail_val);                              \
@@ -928,6 +932,7 @@
         (cache_ptr)->clean_index_ring_size[(entry_ptr)->ring] -= (entry_ptr)->size;                          \
         (cache_ptr)->dirty_index_size += (entry_ptr)->size;                                                  \
         (cache_ptr)->dirty_index_ring_size[(entry_ptr)->ring] += (entry_ptr)->size;                          \
+              fprintf(stderr, "%s: %d: dirty_index_ring_size[%d] = %d\n", __func__, __LINE__, (entry_ptr)->ring, (cache_ptr)->dirty_index_ring_size[(entry_ptr)->ring]);                                  \
         H5C__POST_HT_UPDATE_FOR_ENTRY_DIRTY_SC(cache_ptr, entry_ptr, fail_val);                              \
     } while (0)
 
@@ -945,10 +950,12 @@
         else {                                                                                               \
             (cache_ptr)->dirty_index_size -= (old_size);                                                     \
             (cache_ptr)->dirty_index_ring_size[(entry_ptr)->ring] -= (old_size);                             \
+              fprintf(stderr, "%s: %d: dirty_index_ring_size[%d] = %d\n", __func__, __LINE__, (entry_ptr)->ring, (cache_ptr)->dirty_index_ring_size[(entry_ptr)->ring]);                                  \
         }                                                                                                    \
         if ((entry_ptr)->is_dirty) {                                                                         \
             (cache_ptr)->dirty_index_size += (new_size);                                                     \
             (cache_ptr)->dirty_index_ring_size[(entry_ptr)->ring] += (new_size);                             \
+              fprintf(stderr, "%s: %d: dirty_index_ring_size[%d] = %d\n", __func__, __LINE__, (entry_ptr)->ring, (cache_ptr)->dirty_index_ring_size[(entry_ptr)->ring]);                                  \
         }                                                                                                    \
         else {                                                                                               \
             (cache_ptr)->clean_index_size += (new_size);                                                     \
