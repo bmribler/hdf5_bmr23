@@ -189,7 +189,8 @@ H5C_create(size_t max_cache_size, size_t min_clean_size, int max_type_id,
         cache_ptr->index_ring_size[i]       = (size_t)0;
         cache_ptr->clean_index_ring_size[i] = (size_t)0;
         cache_ptr->dirty_index_ring_size[i] = (size_t)0;
-  fprintf(stderr, "%s: %d: dirty_index_ring_size[%d] = %d\n", __func__, __LINE__, i, cache_ptr->dirty_index_ring_size[i]);
+        fprintf(stderr, "%s: %d: dirty_index_ring_size[%d] = %d\n", __func__, __LINE__, i,
+                cache_ptr->dirty_index_ring_size[i]);
 
         cache_ptr->slist_ring_len[i]  = 0;
         cache_ptr->slist_ring_size[i] = (size_t)0;
@@ -641,7 +642,8 @@ H5C_flush_cache(H5F_t *f, unsigned flags)
         index_size += cache_ptr->index_ring_size[i];
         clean_index_size += cache_ptr->clean_index_ring_size[i];
         dirty_index_size += cache_ptr->dirty_index_ring_size[i];
-  fprintf(stderr, "%s: %d: dirty_index_ring_size[%d] = %d\n", __func__, __LINE__, i, cache_ptr->dirty_index_ring_size[i]);
+        fprintf(stderr, "%s: %d: dirty_index_ring_size[%d] = %d\n", __func__, __LINE__, i,
+                cache_ptr->dirty_index_ring_size[i]);
 
         slist_len += cache_ptr->slist_ring_len[i];
         slist_size += cache_ptr->slist_ring_size[i];

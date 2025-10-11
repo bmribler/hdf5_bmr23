@@ -81,7 +81,7 @@ H5C_dump_cache(H5C_t *cache_ptr, const char *cache_name)
 
     FUNC_ENTER_NOAPI(FAIL)
 
-  fprintf(stderr, "H5C_dump_cache...\n");
+    fprintf(stderr, "H5C_dump_cache...\n");
     /* Sanity check */
     assert(cache_ptr != NULL);
     assert(cache_name != NULL);
@@ -98,12 +98,12 @@ H5C_dump_cache(H5C_t *cache_ptr, const char *cache_name)
         entry_ptr = cache_ptr->index[i];
 
         while (entry_ptr != NULL) {
-fprintf(stderr, "Dirty ring sizes: USER=%zu, RDFSM=%zu, MDFSM=%zu, SBE=%zu, SB=%zu.\n",
-          cache_ptr->dirty_index_ring_size[H5C_RING_USER],
-          cache_ptr->dirty_index_ring_size[H5C_RING_RDFSM],
-          cache_ptr->dirty_index_ring_size[H5AC_RING_MDFSM],
-          cache_ptr->dirty_index_ring_size[H5C_RING_SBE],
-          cache_ptr->dirty_index_ring_size[H5C_RING_SB]);
+            fprintf(stderr, "Dirty ring sizes: USER=%zu, RDFSM=%zu, MDFSM=%zu, SBE=%zu, SB=%zu.\n",
+                    cache_ptr->dirty_index_ring_size[H5C_RING_USER],
+                    cache_ptr->dirty_index_ring_size[H5C_RING_RDFSM],
+                    cache_ptr->dirty_index_ring_size[H5AC_RING_MDFSM],
+                    cache_ptr->dirty_index_ring_size[H5C_RING_SBE],
+                    cache_ptr->dirty_index_ring_size[H5C_RING_SB]);
 
             if (H5SL_insert(slist_ptr, entry_ptr, &(entry_ptr->addr)) < 0)
                 HGOTO_ERROR(H5E_CACHE, H5E_BADVALUE, FAIL, "can't insert entry in skip list");
@@ -923,7 +923,8 @@ H5C_validate_index_list(H5C_t *cache_ptr)
         if (entry_ptr->is_dirty) {
             dirty_size += entry_ptr->size;
             dirty_index_ring_size[entry_ptr->ring] += entry_ptr->size;
-  fprintf(stderr, "%s: %d: dirty_index_ring_size[%d] = %zu\n", __func__, __LINE__, entry_ptr->ring, dirty_index_ring_size[entry_ptr->ring]);
+            fprintf(stderr, "%s: %d: dirty_index_ring_size[%d] = %zu\n", __func__, __LINE__, entry_ptr->ring,
+                    dirty_index_ring_size[entry_ptr->ring]);
         } /* end if */
         else {
             clean_size += entry_ptr->size;
@@ -1077,14 +1078,14 @@ H5C_cache_is_clean(const H5C_t *cache_ptr, H5C_ring_t inner_ring)
     assert(inner_ring <= H5C_RING_SB);
 
     while (ring <= inner_ring) {
-  fprintf(stderr, "cache_ptr->dirty_index_ring_size[%d] = %zu, is ", ring, cache_ptr->dirty_index_ring_size[ring]);
-        if (cache_ptr->dirty_index_ring_size[ring] > 0)
-{
-  fprintf(stderr, "not clean\n");
+        fprintf(stderr, "cache_ptr->dirty_index_ring_size[%d] = %zu, is ", ring,
+                cache_ptr->dirty_index_ring_size[ring]);
+        if (cache_ptr->dirty_index_ring_size[ring] > 0) {
+            fprintf(stderr, "not clean\n");
             HGOTO_DONE(false);
-}
-else
-  fprintf(stderr, "_clean_\n");
+        }
+        else
+            fprintf(stderr, "_clean_\n");
 
         ring++;
     } /* end while */

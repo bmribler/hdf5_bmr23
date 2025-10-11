@@ -2233,7 +2233,7 @@ H5_DLL herr_t H5C_mark_entries_as_clean(H5F_t *f, unsigned ce_array_len, haddr_t
 #endif /* H5_HAVE_PARALLEL */
 
 #ifndef NDEBUG /* debugging functions */
-#endif /* NDEBUG */
+#endif         /* NDEBUG */
 H5_DLL herr_t H5C_dump_cache(H5C_t *cache_ptr, const char *cache_name);
 H5_DLL herr_t H5C_dump_cache_LRU(H5C_t *cache_ptr, const char *cache_name);
 H5_DLL bool   H5C_get_serialization_in_progress(const H5C_t *cache_ptr);

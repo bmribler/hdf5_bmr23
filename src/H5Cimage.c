@@ -124,7 +124,7 @@
  *
  ****************************************************************************/
 typedef struct H5C_addr_entry_t {
-    haddr_t addr;        /* The file address as key */
+    haddr_t        addr; /* The file address as key */
     UT_hash_handle hh;   /* Hash table handle */
 } H5C_addr_entry_t;
 
@@ -1452,7 +1452,7 @@ H5C__decode_cache_image_entry(const H5F_t *f, const H5C_t *cache_ptr, const uint
 
     /* Decode entry offset */
     H5F_addr_decode(f, &p, &addr);
-  fprintf(stderr, "decoded address: %p\n", addr);
+    fprintf(stderr, "decoded address: %p\n", addr);
     if (!H5_addr_defined(addr))
         HGOTO_ERROR(H5E_CACHE, H5E_BADVALUE, FAIL, "invalid entry offset");
 
@@ -2395,7 +2395,7 @@ done:
 static herr_t
 H5C__reconstruct_cache_contents(H5F_t *f, H5C_t *cache_ptr)
 {
-    H5C_cache_entry_t *pf_entry_ptr = NULL;        /* Pointer to prefetched entry */
+    H5C_cache_entry_t *pf_entry_ptr = NULL; /* Pointer to prefetched entry */
     H5C_cache_entry_t *parent_ptr;          /* Pointer to parent of prefetched entry */
     hsize_t            image_len;           /* Image length */
     const uint8_t     *p;                   /* Pointer into image buffer */
@@ -2404,8 +2404,8 @@ H5C__reconstruct_cache_contents(H5F_t *f, H5C_t *cache_ptr)
 
     /* Declare a uthash table to detect duplicate addresses.  It will be destroyed
        after decoding the cache contents */
-    H5C_addr_entry_t *addr_table = NULL;    /* Hash table head */
-    H5C_addr_entry_t *addr_entry = NULL;    /* Points to an address struct */
+    H5C_addr_entry_t *addr_table = NULL; /* Hash table head */
+    H5C_addr_entry_t *addr_entry = NULL; /* Points to an address struct */
 
     FUNC_ENTER_PACKAGE
 
@@ -2429,10 +2429,10 @@ H5C__reconstruct_cache_contents(H5F_t *f, H5C_t *cache_ptr)
     assert(cache_ptr->image_data_len <= cache_ptr->image_len);
     assert(cache_ptr->num_entries_in_image > 0);
 
-  fprintf(stderr, "%s: cache_ptr->num_entries_in_image = %d\n", __func__, cache_ptr->num_entries_in_image);
+    fprintf(stderr, "%s: cache_ptr->num_entries_in_image = %d\n", __func__, cache_ptr->num_entries_in_image);
     /* Reconstruct entries in image */
     for (u = 0; u < cache_ptr->num_entries_in_image; u++) {
-        haddr_t addr;   /* temporary var */
+        haddr_t addr; /* temporary var */
 
         /* Create the prefetched entry described by the ith
          * entry in cache_ptr->image_entrise.
@@ -2442,21 +2442,20 @@ H5C__reconstruct_cache_contents(H5F_t *f, H5C_t *cache_ptr)
         addr = pf_entry_ptr->addr;
 
         /* Make sure the address is not duplicated */
-  fprintf(stderr, "checking for duplicates on entry %d ", u);
+        fprintf(stderr, "checking for duplicates on entry %d ", u);
         HASH_FIND(hh, addr_table, &addr, sizeof(haddr_t), addr_entry);
-        if (addr_entry)
-{
-  fprintf(stderr, "addr = %p is duplicated\n", addr);
+        if (addr_entry) {
+            fprintf(stderr, "addr = %p is duplicated\n", addr);
 
-        /* Find the entry of the same address and remove it from, complicated though */
- /* H5C__DELETE_FROM_INDEX(cache_ptr, entry_ptr, FAIL);
- */ 
+            /* Find the entry of the same address and remove it from, complicated though */
+            /* H5C__DELETE_FROM_INDEX(cache_ptr, entry_ptr, FAIL);
+             */
             /* Duplicate found */
             HGOTO_ERROR(H5E_CACHE, H5E_SYSTEM, FAIL, "duplicate addresses in cache");
-}
+        }
         else {
             /* Insert address into the hash table */
-  fprintf(stderr, "addr = %p is NOT duplicated\n", addr);
+            fprintf(stderr, "addr = %p is NOT duplicated\n", addr);
             if (NULL == (addr_entry = (H5C_addr_entry_t *)H5MM_malloc(sizeof(H5C_addr_entry_t))))
                 HGOTO_ERROR(H5E_CACHE, H5E_CANTALLOC, FAIL, "memory allocation failed for address entry");
             addr_entry->addr = addr;
@@ -2471,7 +2470,7 @@ H5C__reconstruct_cache_contents(H5F_t *f, H5C_t *cache_ptr)
          * reconstruction process.
          */
 
-  fprintf(stderr, "Entry is to be inserted into INDEX\n");
+        fprintf(stderr, "Entry is to be inserted into INDEX\n");
         /* Insert the prefetched entry in the index */
         H5C__INSERT_IN_INDEX(cache_ptr, pf_entry_ptr, FAIL);
 
@@ -2599,8 +2598,8 @@ H5C__reconstruct_cache_contents(H5F_t *f, H5C_t *cache_ptr)
     } /* end if */
 
 done:
-if (FAIL == ret_value)
-  fprintf(stderr, "H5C__reconstruct_cache_contents: failed, goto done\n");
+    if (FAIL == ret_value)
+        fprintf(stderr, "H5C__reconstruct_cache_contents: failed, goto done\n");
     if (FAIL == ret_value && pf_entry_ptr) {
         if (pf_entry_ptr->image_ptr)
             H5MM_xfree(pf_entry_ptr->image_ptr);
@@ -2610,7 +2609,8 @@ if (FAIL == ret_value)
     }
     /* Free the temporary hash table */
     H5C_addr_entry_t *cur, *tmp;
-    HASH_ITER(hh, addr_table, cur, tmp) {
+    HASH_ITER(hh, addr_table, cur, tmp)
+    {
         HASH_DEL(addr_table, cur);
         H5MM_xfree(cur);
     }
@@ -2786,7 +2786,8 @@ H5C__reconstruct_cache_entry(const H5F_t *f, H5C_t *cache_ptr, hsize_t *buf_size
             if (H5_IS_BUFFER_OVERFLOW(p, H5F_SIZEOF_ADDR(f), p_end))
                 HGOTO_ERROR(H5E_CACHE, H5E_OVERFLOW, NULL, "ran off end of input buffer while decoding");
             H5F_addr_decode(f, &p, &(pf_entry_ptr->fd_parent_addrs[u]));
-    fprintf(stderr, "%s: at %d, decoded address: %p\n", __func__, __LINE__, pf_entry_ptr->fd_parent_addrs[u]);
+            fprintf(stderr, "%s: at %d, decoded address: %p\n", __func__, __LINE__,
+                    pf_entry_ptr->fd_parent_addrs[u]);
             if (!H5_addr_defined(pf_entry_ptr->fd_parent_addrs[u]))
                 HGOTO_ERROR(H5E_CACHE, H5E_BADVALUE, NULL, "invalid flush dependency parent offset");
         } /* end for */

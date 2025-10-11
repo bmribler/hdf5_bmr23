@@ -110,14 +110,13 @@ H5AC_dump_cache(const H5F_t *f)
     assert(f);
     assert(f->shared);
     assert(f->shared->cache);
-fprintf(stderr, "\ncalling H5C_dump_cache\n");
+    fprintf(stderr, "\ncalling H5C_dump_cache\n");
 
-    if (H5C_dump_cache(f->shared->cache, H5F_OPEN_NAME(f)) < 0)
-{
-  fprintf(stderr, "H5C_dump_cache failed\n");
+    if (H5C_dump_cache(f->shared->cache, H5F_OPEN_NAME(f)) < 0) {
+        fprintf(stderr, "H5C_dump_cache failed\n");
         HGOTO_ERROR(H5E_CACHE, H5E_SYSTEM, FAIL, "H5C_dump_cache() failed.");
-}
-  fprintf(stderr, "\ndone calling H5C_dump_cache\n");
+    }
+    fprintf(stderr, "\ndone calling H5C_dump_cache\n");
 
 done:
     FUNC_LEAVE_NOAPI(ret_value)
@@ -334,7 +333,7 @@ H5AC_cache_is_clean(const H5F_t *f, H5AC_ring_t inner_ring)
     assert(f->shared);
     cache_ptr = f->shared->cache;
 
-  fprintf(stderr, "calling H5C_cache_is_clean\n");
+    fprintf(stderr, "calling H5C_cache_is_clean\n");
     ret_value = H5C_cache_is_clean(cache_ptr, inner_ring);
 
     FUNC_LEAVE_NOAPI(ret_value)

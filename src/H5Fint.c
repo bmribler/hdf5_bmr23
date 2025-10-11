@@ -1410,7 +1410,7 @@ H5F__dest(H5F_t *f, bool flush, bool free_on_failure)
     assert(f);
     assert(f->shared);
 
-  fprintf(stderr, "H5F__dest is called\n");
+    fprintf(stderr, "H5F__dest is called\n");
     if (1 == f->shared->nrefs) {
         int actype; /* metadata cache type (enum value) */
 
@@ -1443,9 +1443,9 @@ H5F__dest(H5F_t *f, bool flush, bool free_on_failure)
                 /* Push error, but keep going */
                 HDONE_ERROR(H5E_FILE, H5E_CANTFLUSH, FAIL, "unable to flush cached data (phase 2)");
 
-  fprintf(stderr, "\ncalling H5AC_dump_cache\n");
-H5AC_dump_cache(f);
-  fprintf(stderr, "\ndone calling H5AC_dump_cache\n");
+        fprintf(stderr, "\ncalling H5AC_dump_cache\n");
+        H5AC_dump_cache(f);
+        fprintf(stderr, "\ndone calling H5AC_dump_cache\n");
 #if 0
 #endif
 
@@ -1455,10 +1455,10 @@ H5AC_dump_cache(f);
          *
          * Verify this.
          */
-  fprintf(stderr, "calling H5AC_cache_is_clean regardless\n");
+        fprintf(stderr, "calling H5AC_cache_is_clean regardless\n");
         H5AC_cache_is_clean(f, H5AC_RING_MDFSM);
-         /* assert(H5AC_cache_is_clean(f, H5AC_RING_MDFSM));
- */ 
+        /* assert(H5AC_cache_is_clean(f, H5AC_RING_MDFSM));
+         */
 
         /* Release the external file cache */
         if (f->shared->efc) {
