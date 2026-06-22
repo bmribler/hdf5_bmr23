@@ -574,7 +574,6 @@ H5HG_read(H5F_t *f, H5HG_t *hobj, void *object /*out*/, size_t *buf_size)
         HGOTO_ERROR(H5E_HEAP, H5E_BADVALUE, NULL, "bad heap pointer, heap object = {%" PRIxHADDR ", %zu}",
                     hobj->addr, hobj->idx);
 
-
     size = heap->obj[hobj->idx].size;
     p    = heap->obj[hobj->idx].begin + H5HG_SIZEOF_OBJHDR(f);
 
