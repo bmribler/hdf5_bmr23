@@ -349,6 +349,11 @@ H5HG__cache_heap_deserialize(const void *_image, size_t len, void *_udata, bool 
              * is the free space object whose size is never padded and
              * already includes the object header.
              */
+
+            /* Check for integer overflow in need calculation */
+            if (heap->obj[idx].size > heap->size)
+                HGOTO_ERROR(H5E_HEAP, H5E_BADVALUE, NULL, "object size exceeds heap size");
+
             if (idx > 0) {
                 need = H5HG_SIZEOF_OBJHDR(f) + H5HG_ALIGN(heap->obj[idx].size);
                 if (idx > max_idx)
