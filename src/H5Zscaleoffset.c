@@ -1235,6 +1235,12 @@ H5Z__filter_scaleoffset(unsigned flags, size_t cd_nelmts, const unsigned cd_valu
         assert(minbits <= p.size * 8);
         p.minbits = minbits;
 
+fprintf(stderr, "SO decode: nbytes=%zu buf_offset=%u size_out(pre)=%zu "
+                "minbits=%u p.size=%u d_nelmts=%u *buf_size=%zu\n",
+        nbytes, buf_offset, (size_t)d_nelmts * p.size, minbits, p.size,
+        d_nelmts, *buf_size);
+
+
         /* the valid compressed data must at least cover the parameter header */
         if (nbytes < buf_offset)
             HGOTO_ERROR(H5E_ARGS, H5E_BADVALUE, 0, "chunk does not cover the scale-offset parameter header");
